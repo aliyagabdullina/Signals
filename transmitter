@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <signal.h>
+#include <unistd.h>
+
+pid_t pid;
+
+void handler(int signo) {
+    if (signo == SIGUSR1) {
+        printf("Бит получен\n");
+    } else if (signo == SIGUSR2) {
+        printf("Передача завершена\n");
+    }
+}
+
+int main() {
+    printf("PID передачи: %d\n", getpid());
+
+    printf("Введите PID получателя: ");
+    scanf("%d", &pid);
+
+    printf("Введите число: ");
+    int num;
+    scanf("%d", &num);
+
+    for (int i = 31; i >= 0; i--) {
+        if ((num >> i) & 1) {
+            kill(pid, SIGUSR1);
+        } else {
+            kill(pid, SIGUSR2);
+        }
+        usleep(50000);
+    }
+
+    printf("Передача завершена\n");
+    return 0;
+}
